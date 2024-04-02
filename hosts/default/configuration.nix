@@ -113,6 +113,7 @@
       hunspell
       hunspellDicts.de_DE
       hunspellDicts.en_US
+      vlc
     ];
   };
 
@@ -146,11 +147,34 @@
      zsh-autosuggestions
      oh-my-zsh
      gnome.gnome-tweaks
-     gnomeExtensions.tray-icons-reloaded
-     snixembed
      awscli2
      terraform
+     gnomeExtensions.appindicator
+     alacritty
+     warp-terminal
   ];
+
+  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+
+  # remove default gnome apps
+  environment.gnome.excludePackages = (with pkgs; [
+    gnome-photos
+    gnome-tour
+  ]) ++ (with pkgs.gnome; [
+    #cheese # webcam tool
+    gnome-music
+    # gnome-terminal
+    gedit # text editor
+    epiphany # web browser
+    geary # email reader
+    # evince # document viewer
+    #gnome-characters
+    totem # video player
+    tali # poker game
+    iagno # go game
+    hitori # sudoku game
+    atomix # puzzle game
+  ]);
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
