@@ -109,6 +109,10 @@
       brave
       nextcloud-client
       keepassxc
+      libreoffice-fresh
+      hunspell
+      hunspellDicts.de_DE
+      hunspellDicts.en_US
     ];
   };
 
