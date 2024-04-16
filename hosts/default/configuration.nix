@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, pkgs-unstable, inputs, ... }:
 
 {
   imports =
@@ -97,14 +97,11 @@
     isNormalUser = true;
     description = "Leona Lux Luna Hess";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
+    packages = (with pkgs; [
       firefox
       discord
       spotify
       telegram-desktop
-      jetbrains.idea-ultimate
-      standardnotes
-      gitkraken
       slack
       brave
       nextcloud-client
@@ -115,7 +112,12 @@
       hunspellDicts.en_US
       vlc
       plex-media-player
-    ];
+    ])
+    ++
+    (with pkgs-unstable; [
+      jetbrains.idea-ultimate
+      standardnotes
+    ]);
   };
 
   home-manager = {
