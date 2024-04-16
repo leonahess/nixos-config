@@ -17,5 +17,12 @@
         ./hosts/default/configuration.nix
       ];
     };
+
+    nixosConfigurations.lxc = nixpkgs.lib.nixosSystem {
+          specialArgs = {inherit inputs;};
+          modules = [
+            ./hosts/lxc/configuration.nix
+          ];
+        };
   };
 }

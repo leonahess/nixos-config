@@ -114,6 +114,7 @@
       hunspellDicts.de_DE
       hunspellDicts.en_US
       vlc
+      plex-media-player
     ];
   };
 
@@ -175,6 +176,9 @@
     hitori # sudoku game
     atomix # puzzle game
   ]);
+
+  nix.settings.auto-optimise-store = true;
+  nix.gc.automatic = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
