@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, pkgs-unstable, inputs, ... }:
+{ config, pkgs, pkgs-unstable, lib, inputs, ... }:
 
 {
   imports =
@@ -57,9 +57,9 @@
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "de";
-    xkbVariant = "";
+    variant = "";
   };
 
   # Configure console keymap
@@ -117,6 +117,7 @@
     (with pkgs-unstable; [
       jetbrains.idea-ultimate
       standardnotes
+      ssm-session-manager-plugin
     ]);
   };
 
@@ -155,6 +156,8 @@
      gnomeExtensions.appindicator
      alacritty
      warp-terminal
+     python3
+     python311Packages.pip
   ];
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
@@ -163,11 +166,11 @@
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
+    gedit # text editor
   ]) ++ (with pkgs.gnome; [
     #cheese # webcam tool
     gnome-music
     # gnome-terminal
-    gedit # text editor
     epiphany # web browser
     geary # email reader
     # evince # document viewer
