@@ -15,7 +15,12 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+      v4l2loopback
+    ];
+  boot.kernelModules = [ "v4l2loopback" ];
+   boot.extraModprobeConfig = ''options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1'';
+    security.polkit.enable = true;
 
   boot.initrd.luks.devices."luks-bed2cbe9-8bc2-4fbf-ba52-d26b0772d196".device = "/dev/disk/by-uuid/bed2cbe9-8bc2-4fbf-ba52-d26b0772d196";
   networking.hostName = "nix1"; # Define your hostname.
@@ -92,14 +97,17 @@
   environment.shells = with pkgs; [ zsh ];
   users.defaultUserShell = pkgs.zsh;
 
+  virtualisation.docker.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.leluxlu = {
     isNormalUser = true;
     description = "Leona Lux Luna Hess";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = (with pkgs; [
       firefox
       discord
+      obs-studio
       spotify
       telegram-desktop
       slack
@@ -118,6 +126,7 @@
       jetbrains.idea-ultimate
       standardnotes
       ssm-session-manager-plugin
+      terraform
     ]);
   };
 
@@ -149,15 +158,30 @@
      zsh
      zsh-z
      zsh-autosuggestions
+     pwvucontrol
+     intel-gpu-tools
      oh-my-zsh
+     fzf
+     jq
+     ansible
+     direnv
+     envsubst
+     zip
      gnome.gnome-tweaks
      awscli2
-     terraform
+     awsebcli
      gnomeExtensions.appindicator
      alacritty
+     prometheus-node-exporter
      warp-terminal
      python3
      python311Packages.pip
+     python311Packages.boto3
+     python311Packages.botocore
+     binutils
+     graphviz
+     maven
+     jdk21_headless
   ];
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];

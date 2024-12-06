@@ -33,6 +33,7 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+    initExtra=''eval "$(direnv hook zsh)"'';
     shellAliases = {
       ll = "ls -lah";
       upgrade = "sudo nixos-rebuild switch --flake /home/leluxlu/code/private/nixos-config#default";
@@ -45,6 +46,18 @@
       plugins = [ "git" "z" ];
       theme = "agnoster";
     };
+  };
+
+  programs.obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        obs-backgroundremoval
+      ];
+    };
+
+  programs.fzf = {
+    enable = true;
+
   };
 
 
@@ -79,8 +92,23 @@
   #  /etc/profiles/per-user/leluxlu/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    AWS_PROFILE = "main";
+    AWS_EB_PROFILE = "main";
   };
+
+  home.sessionPath = [
+    ""
+  ];
+
+  services.nextcloud-client = {
+      enable = true;
+      #startInBackground = false;
+    };
+    systemd.user.services.nextcloud-client = {
+      Unit = {
+        After = pkgs.lib.mkForce "graphical-session.target";
+      };
+    };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
