@@ -72,9 +72,14 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.printing.drivers = [ pkgs.gutenprint pkgs.brlaser ];
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
 
   # Enable sound with pipewire.
-  sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -99,11 +104,20 @@
 
   virtualisation.docker.enable = true;
 
+  services.smartd = {
+    enable = true;
+    devices = [
+      {
+        device = "/dev/nvme1n1";
+      }
+    ];
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.leluxlu = {
     isNormalUser = true;
     description = "Leona Lux Luna Hess";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "dialout" ];
     packages = (with pkgs; [
       firefox
       discord
@@ -113,13 +127,17 @@
       slack
       brave
       nextcloud-client
+      zoom-us
       keepassxc
+      rpi-imager
       libreoffice-fresh
       hunspell
       hunspellDicts.de_DE
       hunspellDicts.en_US
       vlc
       plex-media-player
+      texlive.combined.scheme-full
+      thonny
     ])
     ++
     (with pkgs-unstable; [
@@ -141,6 +159,34 @@
     };
   };
 
+  services.prometheus.exporters.node = {
+    enable = true;
+    port = 9000;
+
+  };
+
+#  networking.bridges = {
+#    "br0" = {
+#      interfaces = [ "eno1" "enp0s20f0u2" ];
+#    };
+#  };
+#  networking.useDHCP = false;
+##  networking.interfaces.br0.ipv4.addresses = [ {
+##    address = "192.168.0.5";
+##    prefixLength = 24;
+##  } ];
+#  networking.interfaces.eno1.ipv4.addresses = [ {
+#    address = "192.168.0.5";
+#    prefixLength = 24;
+#  } ];
+#  networking.defaultGateway = "192.168.0.1";
+#  networking.nameservers = ["192.168.0.1" "8.8.8.8"];
+
+  networking.firewall.extraCommands = ''
+    iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 9000:9000 -j nixos-fw-accept
+    iptables -A nixos-fw -p udp --source 192.168.1.0/24 --dport 9000:9000 -j nixos-fw-accept
+  '';
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -151,6 +197,8 @@
      wget
      btop
      git
+     smartmontools
+     iotop
      curl
      guake
      docker
@@ -164,16 +212,16 @@
      fzf
      jq
      ansible
+     postgresql
      direnv
      envsubst
      zip
-     gnome.gnome-tweaks
+     gnome-tweaks
      awscli2
      awsebcli
      gnomeExtensions.appindicator
-     alacritty
+     gnomeExtensions.wintile-beyond
      prometheus-node-exporter
-     warp-terminal
      python3
      python311Packages.pip
      python311Packages.boto3
@@ -184,14 +232,13 @@
      jdk21_headless
   ];
 
-  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+  services.udev.packages = with pkgs; [ gnome-settings-daemon ];
 
   # remove default gnome apps
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
     gedit # text editor
-  ]) ++ (with pkgs.gnome; [
     #cheese # webcam tool
     gnome-music
     # gnome-terminal
