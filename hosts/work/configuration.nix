@@ -80,7 +80,7 @@
   };
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -145,6 +145,17 @@
       "leluxlu" = import ./home.nix;
     };
   };
+
+  services.prometheus.exporters.node = {
+    enable = true;
+    port = 9000;
+
+  };
+
+  networking.firewall.extraCommands = ''
+    iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 9000:9000 -j nixos-fw-accept
+    iptables -A nixos-fw -p udp --source 192.168.1.0/24 --dport 9000:9000 -j nixos-fw-accept
+  '';
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

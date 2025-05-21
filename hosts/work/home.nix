@@ -33,7 +33,7 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    initExtra=''eval "$(direnv hook zsh)"'';
+    initContent=''eval "$(direnv hook zsh)"'';
     shellAliases = {
       ll = "ls -lah";
       upgrade = "sudo nixos-rebuild switch --flake /home/leluxlu/code/private/nixos-config#default";
