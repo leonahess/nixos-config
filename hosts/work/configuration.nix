@@ -170,6 +170,7 @@
      curl
      guake
      docker
+     caligula
      docker-compose
      zsh
      zsh-z
