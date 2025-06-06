@@ -114,6 +114,7 @@
       discord
       vivaldi
       obs-studio
+      zoom-us
       spotify
       telegram-desktop
       slack
@@ -152,9 +153,15 @@
 
   };
 
+  services.prometheus.exporters.nvidia-gpu = {
+    enable = true;
+  };
+
   networking.firewall.extraCommands = ''
     iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 9000:9000 -j nixos-fw-accept
     iptables -A nixos-fw -p udp --source 192.168.1.0/24 --dport 9000:9000 -j nixos-fw-accept
+    iptables -A nixos-fw -p tcp --source 192.168.1.0/24 --dport 9835:9835 -j nixos-fw-accept
+    iptables -A nixos-fw -p udp --source 192.168.1.0/24 --dport 9835:9835 -j nixos-fw-accept
   '';
 
   # Allow unfree packages
@@ -191,9 +198,8 @@
      gnomeExtensions.gtile
      prometheus-node-exporter
      python3
-     python311Packages.pip
-     python311Packages.boto3
-     python311Packages.botocore
+     nvtopPackages.full
+     prometheus-nvidia-gpu-exporter
      binutils
      graphviz
      maven
