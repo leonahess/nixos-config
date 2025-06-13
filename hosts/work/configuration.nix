@@ -116,6 +116,7 @@
       obs-studio
       zoom-us
       spotify
+      signal-desktop
       telegram-desktop
       slack
       nextcloud-client
